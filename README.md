@@ -129,7 +129,7 @@ These are additional **clusters** layered on an Apache NetBeans source build.
 ## Usage
 
 A good end-to-end exercise of this plugin is the **DuckDB JDBC driver**,
-[`duckdb/duckdb-java`](https://github.com/duckdb/duckdb-java) — a genuinely mixed
+[`duckdb/duckdb-java`](https://github.com/duckdb/duckdb-java) — a mixed
 project: a **C++ JNI native library** plus a **Java JDBC API**, built with CMake
 and a `Makefile`. The steps below are exactly the workflow we used.
 
