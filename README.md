@@ -126,6 +126,93 @@ These are additional **clusters** layered on an Apache NetBeans source build.
 
 ---
 
+## Usage — a worked example: the DuckDB JDBC driver
+
+A good end-to-end exercise of this plugin is the **DuckDB JDBC driver**,
+[`duckdb/duckdb-java`](https://github.com/duckdb/duckdb-java) — a genuinely mixed
+project: a **C++ JNI native library** plus a **Java JDBC API**, built with CMake
+and a `Makefile`. The steps below are exactly the workflow we used.
+
+### 1. Open the native (C/C++) side as a make project
+
+`duckdb-java` builds with `make`/CMake, so open it as a CND **make project**:
+
+- *File → Open Project* on the checkout if it already contains `nbproject/`
+  (CND make-project metadata), **or**
+- *File → New Project → C/C++ → C/C++ Project with Existing Sources*, point it at
+  the checkout, and let the wizard detect the `Makefile`.
+
+NetBeans then parses the native sources under `src/jni/*.cpp` into the C/C++ code
+model (give the parse a moment to finish — progress shows bottom-right).
+
+### 2. Build the native library + driver jar
+
+`duckdb-java`'s `Makefile` default target is `test`, **not** a build — running a
+bare `make` fails because nothing is compiled yet. Build first:
+
+```
+make release     # CMake-builds the JNI native lib + the JDBC jar
+make test        # runs the test harness against the built jar
+```
+
+`make release` produces `build/release/duckdb_jdbc.jar`, which bundles the
+compiled native library (e.g. `libduckdb_java.so_osx_universal` on macOS).
+Prerequisites on macOS: CMake and the Xcode command-line tools. You can run these
+targets from the CND make project (which executes them through the integrated
+terminal), or from a shell.
+
+### 3. Get Java resolution alongside the C/C++ project
+
+A CND make project indexes **C/C++ only** — it does not register Java source
+roots, so `import static org.duckdb.DuckDBBindings.*;` (and every other Java
+symbol) shows unresolved. Add a lightweight **Maven project** that points at the
+existing Java sources. `duckdb-java` already uses the Maven-standard layout
+(`src/main/java`, `src/test/java`), so the POM is tiny — drop it in a subfolder
+(e.g. `nb-java/pom.xml`) so it does not collide with the CND `nbproject/`:
+
+```xml
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.duckdb</groupId>
+    <artifactId>duckdb-java-sources</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <properties>
+        <maven.compiler.release>11</maven.compiler.release>
+    </properties>
+    <build>
+        <sourceDirectory>../src/main/java</sourceDirectory>
+        <testSourceDirectory>../src/test/java</testSourceDirectory>
+    </build>
+</project>
+```
+
+*File → Open Project* on `nb-java` → full Java indexing (completion, navigation,
+refactoring). It references the real sources in place — nothing is copied — and
+leaves the CND make project untouched. You now edit the **C++** side and the
+**Java** side of the same driver in one IDE.
+
+### 4. Navigate between Java `native` methods and their C++ implementations
+
+With both projects open and parsed, `cnd.mixeddev` links them. In a Java file
+(e.g. `org/duckdb/DuckDBBindings.java`), hold **⌘ / Ctrl**, hover a `native`
+method name until it underlines, and click:
+
+- `duckdb_appender_close` → jumps to
+  `Java_org_duckdb_DuckDBBindings_duckdb_1appender_1close` in
+  `src/jni/bindings_appender.cpp`.
+
+DuckDB uses the standard JNI export naming (`Java_<pkg>_<Class>_<method>`, with
+`_1` as the mangled underscore), which is exactly what `cnd.mixeddev` computes
+from the Java signature. Right-click a JNI class for **Generate JNI header** or
+**Copy JNI signature**, and use **Attach with Native Debugger** to debug the
+native side of a running JVM.
+
+> If a jump reports *"Cannot navigate here!"*, the C++ code model hasn't finished
+> parsing `src/jni` yet — let the CND make project finish scanning, then retry.
+
+---
+
 ## Relationship to Apache NetBeans
 
 These modules are intentionally **not** in Apache NetBeans: the ASF cannot ship
