@@ -1,0 +1,142 @@
+# NetBeans C/C++ (CND) Support — Restoration for Apache NetBeans 31
+
+This repository contains the **full C/C++ development modules ("CND") from
+NetBeans 8.2**, restored and made to build against **Apache NetBeans 31** and
+**JDK 21**.
+
+These modules were part of NetBeans before Oracle donated the project to the
+Apache Software Foundation. They were **not** part of that donation and are
+therefore absent from Apache NetBeans. This repository brings them back so they
+can be built and run on a current NetBeans platform.
+
+> ⚠️ This is an independent, unofficial restoration. It is **not** affiliated
+> with, endorsed by, or supported by Oracle, the Apache Software Foundation, or
+> the Apache NetBeans project. See [Ownership & License](#ownership--license).
+
+---
+
+## Ownership & License
+
+**The code in this repository is not mine and I do not claim ownership of it.**
+Essentially all source under `cnd/`, `cndext/`, and `dlight/` is pre-existing,
+copyrighted work:
+
+| Copyright holder | Years (per file headers) |
+|------------------|--------------------------|
+| Sun Microsystems, Inc. | 1997–2007 |
+| Oracle and/or its affiliates | 2007–2016 |
+
+Every source file retains its **original copyright header** and the following
+dual-license grant, unchanged:
+
+> *The contents of this file are subject to the terms of either the GNU General
+> Public License Version 2 only ("GPL") or the Common Development and
+> Distribution License ("CDDL")* … with Oracle's **"Classpath" exception**.
+
+→ License: **`CDDL-1.0 OR GPL-2.0-only WITH Classpath-exception-2.0`**
+(recipient's choice). Full text: [`LICENSE`](LICENSE).
+
+The only original contribution here is the set of **modifications** required to
+compile and run the 8.2 code on NetBeans 31 / JDK 21 (see
+[Modifications](#modifications-made)). Those modifications are released under the
+**same CDDL/GPL dual license** as the files they modify.
+
+### What you may do
+
+- ✅ Use, build, run, copy, modify, and **redistribute** these modules, under
+  **CDDL and/or GPL** (your choice, per the dual grant).
+
+### What you must do
+
+- 📌 **Keep every copyright notice and license header intact** — the headers
+  state *"DO NOT ALTER OR REMOVE COPYRIGHT NOTICES."*
+- 📌 **Include [`LICENSE`](LICENSE)** with any redistribution.
+- 📌 **Keep modified CDDL files under CDDL** (CDDL is file-level copyleft).
+- 📌 If distributing under **GPL**, make corresponding source available.
+
+### What you may not do
+
+- ❌ Relicense the Oracle/Sun files under Apache-2.0, MIT, or your own license.
+- ❌ Claim authorship of the recovered code.
+- ❌ Use the **"NetBeans", "Oracle", or "Java"** trademarks to imply this is an
+  official Oracle or Apache product. These are trademarks of their respective
+  owners; their use here is nominal (to describe the code), not an endorsement.
+
+---
+
+## Contents
+
+| Path | Modules | Description |
+|------|---------|-------------|
+| `cnd/` | 86 source trees | C/C++ editor, make projects, debugger, code model, remote, discovery, … |
+| `cndext/` | `cnd.mixeddev` | C/C++ ↔ Java JNI bridge (JNI header generation, Java `native` → C++ navigation) |
+| `dlight/` | 13 source trees | Native execution, remote filesystem, terminal/PTY |
+
+**Excluded on purpose:** `cnd.debugger.dbx` and `libs.dbx.support` — proprietary
+Solaris `dbx` support that was never open-sourced.
+
+**Not committed** (regenerated/downloaded at build time): module `build/` output,
+and the ANTLR 3.4 build-time toolchain (`cnd/.antlr3-tool/`, BSD-licensed; see
+[Building](#building)).
+
+---
+
+## Modifications made
+
+All under CDDL/GPLv2-CP. Build/compatibility fixes only — no feature changes:
+
+- **Layout** — module `build.xml` imports and `<project name>` values adjusted
+  for the Apache grouped layout (`group/module/`) vs. the flat 8.2 layout.
+- **JDK 21** — `javac.source`/`target` bumped from 1.5/1.6/1.7 to 1.8+;
+  `--add-exports` added for `dlight.remote.ui` (`sun.awt.shell`, `sun.swing`);
+  a stale `-target 1.5` removed.
+- **Platform drift** — `cnd.indexing` dependency on `parsing.lucene` updated to
+  the current release/spec; `java.api.common` dependency added to `cnd.mixeddev`
+  (a method moved to a superinterface).
+- **ANTLR** — `cnd.modelimpl` ANTLR 3 code generation repointed at a downloaded
+  ANTLR 3.4 toolchain (the original `libs.antlr3.devel` module was never donated
+  to Apache).
+- **Dependency pruning** — dead remote-VCS dependencies removed from `dlight.kit`
+  and `cnd.kit`.
+
+---
+
+## Building
+
+These are additional **clusters** layered on an Apache NetBeans source build.
+
+1. Clone Apache NetBeans 31 and copy these three directories into the checkout:
+   ```
+   git clone --branch 31 https://github.com/apache/netbeans.git
+   cp -r cnd cndext dlight netbeans/
+   ```
+2. Apply the cluster wiring in `nbbuild/cluster.properties` — see
+   [`docs/cluster.properties.patch`](docs/cluster.properties.patch). It declares
+   the `cnd`/`cndext`/`dlight` clusters and the trimmed module lists.
+3. Provide the ANTLR 3.4 build-time toolchain in `cnd/.antlr3-tool/`
+   (BSD-licensed, from Maven Central): `antlr-3.4.jar`, `antlr-runtime-3.4.jar`,
+   `antlr-2.7.7.jar`, `stringtemplate-3.2.1.jar`, `ST4-4.0.4.jar`.
+4. Build (JDK 21, Apache Ant 1.10+):
+   ```
+   cd netbeans
+   ant -Dcluster.config=cnd build-nozip      # platform + ide + cnd + dlight
+   ant -Dcluster.config=cndext build-nozip   # the above + Java + cnd.mixeddev
+   ```
+5. Run: `nbbuild/netbeans/bin/netbeans`
+
+---
+
+## Relationship to Apache NetBeans
+
+These modules are intentionally **not** in Apache NetBeans: the ASF cannot ship
+CDDL-licensed code as project source (CDDL is "Category B" under ASF licensing
+policy), and these modules were never relicensed to Apache-2.0 nor IP-cleared
+for donation. This repository does not change that. **Do not** submit this code
+to Apache NetBeans without the ASF's formal IP-clearance process.
+
+---
+
+## Disclaimer
+
+This README describes licensing to the best of my understanding; it is **not
+legal advice**. All trademarks are the property of their respective owners.

@@ -1,0 +1,52 @@
+diff --git a/nbbuild/cluster.properties b/nbbuild/cluster.properties
+index ffd892f7ba..88f779d5f6 100644
+--- a/nbbuild/cluster.properties
++++ b/nbbuild/cluster.properties
+@@ -34,6 +34,9 @@ clusters.config.release.list=\
+ # full config must contain all clusters
+ clusters.config.full.list=\
+         nb.cluster.rust,\
++        nb.cluster.dlight,\
++        nb.cluster.cnd,\
++        nb.cluster.cndext,\
+         ${clusters.config.release.list}
+ # ${clusters.config.release.list} must be last for ergonomics to be last
+ 
+@@ -1018,7 +1021,6 @@ nb.cluster.cnd=\
+         cnd.cncppunit,\
+         cnd.completion,\
+         cnd.debugger.common2,\
+-        cnd.debugger.dbx,\
+         cnd.debugger.gdb2,\
+         cnd.discovery,\
+         cnd.dwarfdiscovery,\
+@@ -1058,8 +1060,7 @@ nb.cluster.cnd=\
+         cnd.utils,\
+         cnd.utils.ui,\
+         jellytools.cnd,\
+-        libs.clank,\
+-        libs.dbx.support
++        libs.clank
+ validation.nb.cluster.cnd=\
+         cnd.kit
+ 
+@@ -1102,18 +1103,11 @@ nb.cluster.dlight.depends=\
+         nb.cluster.platform,\
+         nb.cluster.ide
+ nb.cluster.dlight=\
+-        dlight.kit,\
+         dlight.libs.common,\
+         dlight.remote,\
+         dlight.remote.impl,\
+         dlight.remote.ui,\
+-        dlight.sendto,\
+-        git.remote,\
+-        git.remote.cli,\
+-        mercurial.remote,\
+-        remotefs.versioning,\
+-        remotefs.versioning.api,\
+-        subversion.remote
++        dlight.sendto
+ 
+ nb.cluster.jira.dir=extra
+ nb.cluster.jira.depends=\
