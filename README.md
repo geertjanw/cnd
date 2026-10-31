@@ -126,7 +126,7 @@ These are additional **clusters** layered on an Apache NetBeans source build.
 
 ---
 
-## Usage — a worked example: the DuckDB JDBC driver
+## Usage
 
 A good end-to-end exercise of this plugin is the **DuckDB JDBC driver**,
 [`duckdb/duckdb-java`](https://github.com/duckdb/duckdb-java) — a genuinely mixed
