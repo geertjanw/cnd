@@ -13,6 +13,17 @@ can be built and run on a current NetBeans platform.
 > with, endorsed by, or supported by Oracle, the Apache Software Foundation, or
 > the Apache NetBeans project. See [Ownership & License](#ownership--license).
 
+> 💡 **Need Apache-2.0 licensing instead?** A sibling project,
+> [**`geertjanw/cnd-apache`**](https://github.com/geertjanw/cnd-apache), packages
+> the *leaner* subset of CND that Oracle actually **donated** to the ASF and that
+> was **relicensed to Apache 2.0** — built from the official
+> [`apache/netbeans@cnd`](https://github.com/apache/netbeans/tree/cnd) branch. It
+> has fewer modules (no native code model, so C/C++ intelligence is delegated to
+> `clangd` over LSP) but it is genuinely Apache-licensed and can be redistributed
+> or contributed toward Apache NetBeans. See
+> [Relationship to Apache NetBeans](#relationship-to-apache-netbeans) for how the
+> two repositories compare.
+
 ---
 
 ## Ownership & License
@@ -220,6 +231,28 @@ CDDL-licensed code as project source (CDDL is "Category B" under ASF licensing
 policy), and these modules were never relicensed to Apache-2.0 nor IP-cleared
 for donation. This repository does not change that. **Do not** submit this code
 to Apache NetBeans without the ASF's formal IP-clearance process.
+
+### The Apache-2.0 subset: `geertjanw/cnd-apache`
+
+Oracle *did* donate **part** of CND to the ASF (the so-called "4th and 5th
+donations"), and that part **was** IP-cleared and relicensed to Apache 2.0. It is
+maintained on the [`apache/netbeans@cnd`](https://github.com/apache/netbeans/tree/cnd)
+branch and packaged, with prebuilt plugins, at
+[**`geertjanw/cnd-apache`**](https://github.com/geertjanw/cnd-apache).
+
+| | **this repo (`geertjanw/cnd`)** | **[`geertjanw/cnd-apache`](https://github.com/geertjanw/cnd-apache)** |
+|---|---|---|
+| Source | NetBeans **8.2** (Sun/Oracle era) | Official `apache/netbeans@cnd` branch |
+| License | **CDDL-1.0 OR GPL-2.0-only WITH Classpath-exception-2.0** | **Apache License 2.0** |
+| Modules | ~86 `cnd` + `cnd.mixeddev` + 13 `dlight` | 26 `cnd` + 4 `cpplite` + 12 `dlight` |
+| C/C++ intelligence | **native** NetBeans code model (zero-setup) | **clangd** via LSP (install clangd separately) |
+| Refactoring, call graph, class view, DWARF discovery, CppUnit | ✅ included | ❌ not part of the donation |
+| Java ↔ C/C++ JNI navigation (`cnd.mixeddev`) | ✅ included | ❌ depends on the native code model (not donated) |
+| Can be contributed toward Apache NetBeans | ❌ needs ASF IP clearance first | ✅ already Apache-licensed & IP-cleared |
+
+Use **this** repo for maximum 8.2 feature parity for local use (and you are fine
+with CDDL/GPL); use **`cnd-apache`** if you need Apache-2.0 licensing — e.g. to
+redistribute or to contribute toward Apache NetBeans.
 
 ---
 
