@@ -15,7 +15,7 @@ can be built and run on a current NetBeans platform.
 
 > 💡 **Need Apache-2.0 licensing instead?** A sibling project,
 > [**`geertjanw/cnd-apache`**](https://github.com/geertjanw/cnd-apache), packages
-> the *leaner* subset of CND that Oracle actually **donated** to the ASF and that
+> the *subset* of CND that Oracle actually **donated** to the ASF and that
 > was **relicensed to Apache 2.0** — built from the official
 > [`apache/netbeans@cnd`](https://github.com/apache/netbeans/tree/cnd) branch. It
 > has fewer modules (no native code model, so C/C++ intelligence is delegated to
