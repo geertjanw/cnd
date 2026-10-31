@@ -19,7 +19,7 @@ can be built and run on a current NetBeans platform.
 > was **relicensed to Apache 2.0** — built from the official
 > [`apache/netbeans@cnd`](https://github.com/apache/netbeans/tree/cnd) branch. It
 > has fewer modules (no native code model, so C/C++ intelligence is delegated to
-> `clangd` over LSP) but it is genuinely Apache-licensed and can be redistributed
+> `clangd` over LSP) but it is Apache-licensed and can be redistributed
 > or contributed toward Apache NetBeans. See
 > [Relationship to Apache NetBeans](#relationship-to-apache-netbeans) for how the
 > two repositories compare.
